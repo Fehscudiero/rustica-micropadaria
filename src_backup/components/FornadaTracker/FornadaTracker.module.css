@@ -1,0 +1,200 @@
+/* ════════════════════════════════════════════════════
+   FornadaTracker — Isolated CSS Module
+   BEM: rustica-fornada__[element]
+   All values use CSS custom properties for theming.
+   Zero global leakage by design.
+════════════════════════════════════════════════════ */
+
+.rustica-fornada__container {
+  /* Fluid sizing — breathes from 375px iPhone to ultrawide */
+  width: clamp(280px, 88vw, 380px);
+  padding: clamp(1.5rem, 4vw, 2.25rem);
+
+  /* Premium deep glassmorphism */
+  background: rgba(250, 247, 242, 0.55);
+  backdrop-filter: blur(48px) saturate(180%);
+  -webkit-backdrop-filter: blur(48px) saturate(180%);
+  border: 1px solid rgba(27, 48, 34, 0.09);
+  border-radius: 28px;
+
+  /* Layered shadow for 3D lift */
+  box-shadow:
+    0 2px 0 rgba(255, 255, 255, 0.9) inset,   /* top edge highlight */
+    0 40px 80px rgba(0, 0, 0, 0.07),
+    0 8px 24px rgba(0, 0, 0, 0.04);
+
+  /* GSAP will animate transform — hardware accelerate */
+  will-change: transform, opacity;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Header ── */
+.rustica-fornada__header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+/* ── Pulse indicator ── */
+.rustica-fornada__indicator {
+  position: relative;
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
+  background: #1B3022;
+  border-radius: 50%;
+}
+
+.rustica-fornada__pulse {
+  position: absolute;
+  inset: 0;
+  background: #1B3022;
+  border-radius: 50%;
+  animation: rustica-pulse 2.8s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+}
+
+@keyframes rustica-pulse {
+  0%   { transform: scale(1);   opacity: 0.7; }
+  100% { transform: scale(4);   opacity: 0;   }
+}
+
+.rustica-fornada__title {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-weight: 700;
+  color: rgba(27, 48, 34, 0.55);
+  font-family: 'Inter', sans-serif;
+}
+
+/* ── Product name ── */
+.rustica-fornada__product {
+  font-family: var(--font-display, 'Cormorant Garamond', Georgia, serif);
+  font-size: clamp(1.85rem, 5vw, 2.4rem);
+  color: #1B3022;
+  margin: 0 0 1.25rem;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+}
+
+/* ── Timer box ── */
+.rustica-fornada__timer-box {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9rem 1.1rem;
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(27, 48, 34, 0.06);
+  border-radius: 14px;
+  margin-bottom: 1.75rem;
+}
+
+.rustica-fornada__icon {
+  color: rgba(27, 48, 34, 0.4);
+  flex-shrink: 0;
+}
+
+.rustica-fornada__timer-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  color: rgba(27, 48, 34, 0.7);
+  font-weight: 500;
+}
+
+.rustica-fornada__timer-digits {
+  /* tabular-nums prevents layout shift as digits change */
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: 0.06em;
+  color: #1B3022;
+  margin-left: 0.3rem;
+}
+
+/* ── Accessible hidden text for screen readers ── */
+.rustica-fornada__sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── Magnetic CTA ── */
+.rustica-fornada__cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  width: 100%;
+  min-height: 58px;           /* Apple HIG + WCAG 2.5.5 touch target */
+  border: none;
+  border-radius: 100px;
+  background: #1B3022;
+  color: #FAF7F2;
+  text-decoration: none;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: clamp(0.9rem, 2vw, 1rem);
+  letter-spacing: 0.04em;
+  cursor: none;               /* hidden behind custom cursor on desktop */
+  will-change: transform;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.3s;
+}
+
+/* Shimmer sweep on hover */
+.rustica-fornada__cta::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.12) 50%,
+    transparent 70%
+  );
+  transform: translateX(-100%);
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .rustica-fornada__cta:hover::after {
+    transform: translateX(100%);
+  }
+  .rustica-fornada__cta:hover {
+    background: #2a4a33;
+  }
+}
+
+.rustica-fornada__cta-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+  transition: transform 0.3s;
+}
+
+.rustica-fornada__cta:hover .rustica-fornada__cta-icon {
+  transform: translateX(4px);
+}
+
+.rustica-fornada__cta-text {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Mobile refinements ── */
+@media (max-width: 768px) {
+  .rustica-fornada__cta {
+    min-height: 62px;
+    cursor: auto;             /* restore native cursor on touch devices */
+  }
+  .rustica-fornada__container {
+    border-radius: 22px;
+  }
+}

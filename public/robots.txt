@@ -1,0 +1,34 @@
+# Robots.txt - Rústica Micropadaria
+# https://rusticamicropadaria.com/
+
+User-agent: *
+Allow: /
+
+User-agent: Googlebot
+Allow: /
+Disallow: /src/
+Disallow: /assets/
+
+# Crawl-delay (politeness)
+Crawl-delay: 1
+
+# Sitemap
+Sitemap: https://rusticamicropadaria.com/sitemap.xml
+
+# Renderização
+User-agent: googlebot-image
+Allow: /
+Allow: /assets/
+
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: twitterbot
+Allow: /
+
+#青年禁止 - Bing
+User-agent: msnbot
+Allow: /
+
+# Favicon
+Host: https://rusticamicropadaria.com/
