@@ -188,24 +188,29 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
 .section-pad { padding: clamp(4rem, 8vw, 9rem) 0; }
 @media (max-width: 768px) { .section-pad { padding: clamp(3rem, 10vw, 5rem) 0; } }
 
-/* ═══ CUSTOM CURSOR — Bread themed ═══ */
+/* ═══ CUSTOM CURSOR — Green themed ═══ */
 .cursor-dot {
   position: fixed; top: 0; left: 0;
-  width: 32px; height: 32px;
-  font-size: 26px;
-  line-height: 32px;
-  text-align: center;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: #1B3022;
   pointer-events: none; z-index: 10001;
   will-change: transform;
+  box-shadow: 0 0 10px rgba(27, 48, 34, 0.5), 0 0 0 3px rgba(27, 48, 34, 0.12);
 }
 
-.cursor-dot::before {
-  content: '🥐';
+.cursor-follower {
+  position: fixed; top: 0; left: 0;
+  width: 40px; height: 40px;
+  font-size: 32px;
+  line-height: 40px;
+  text-align: center;
+  pointer-events: none; z-index: 10000;
+  will-change: transform;
+  transition: transform 0.12s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.cursor-ring {
-  display: none;
-}
+.cursor-ring { display: none; }
 
 /* Hide native cursor on fine-pointer (mouse) devices */
 @media (hover: hover) and (pointer: fine) {
@@ -553,7 +558,7 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
   perspective: 1000px;
 }
 .hero-logo-inner {
-  width: clamp(180px, 24vw, 320px);
+  width: clamp(140px, 20vw, 260px);
   aspect-ratio: 1 / 1;
   transition: transform 0.1s ease-out;
   will-change: transform;
