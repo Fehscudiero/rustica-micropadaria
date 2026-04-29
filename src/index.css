@@ -210,6 +210,16 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
   transition: transform 0.12s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+/* Hide custom cursor on touch/mobile */
+@media (pointer: coarse) {
+  .cursor-dot, .cursor-follower { display: none !important; }
+  * { cursor: auto !important; }
+}
+
+@media (max-width: 768px) {
+  .cursor-dot, .cursor-follower { display: none !important; }
+}
+
 .cursor-ring { display: none; }
 
 /* Hide native cursor on fine-pointer (mouse) devices */
@@ -244,10 +254,11 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
   object-position: center;
 }
 .preloader-text {
-  font-family: var(--font-display);
+  font-family: var(--font-display) !important;
   font-size: 1rem; letter-spacing: 0.4em;
-  text-transform: uppercase; color: var(--primary);
-  opacity: 0.6;
+  text-transform: uppercase; color: #000 !important;
+  font-weight: 700 !important;
+  opacity: 0.9;
 }
 .preloader-bar {
   width: 120px; height: 2px; background: rgba(27,48,34,0.1);
@@ -257,7 +268,7 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
 .preloader-fill {
   position: absolute; left: 0; top: 0;
   width: 0%; height: 100%;
-  background: var(--primary);
+  background: #1B3022;
   border-radius: 2px;
 }
 
@@ -725,19 +736,31 @@ div.story-grid {
 
 /* ═══ CTA BANNER ═══ */
 .cta-banner {
-  background: var(--bg-warm); border-radius: var(--radius-lg);
-  padding: clamp(4rem, 8vw, 8rem) clamp(2rem, 5vw, 5rem);
-  display: flex; justify-content: space-between; align-items: center;
-  gap: 3rem;
+  background: rgba(250, 247, 242, 0.7);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-radius: var(--radius-lg);
+  padding: clamp(0.8rem, 1.5vw, 1rem) clamp(1rem, 2vw, 1.5rem);
+  display: flex; justify-content: center; align-items: center;
+  gap: 0.8rem; flex-wrap: wrap; text-align: center;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
 }
-.cta-banner h2 { font-size: clamp(2rem, 4vw, 3.5rem); max-width: 600px; color: var(--primary); }
+.cta-banner h2 { 
+  font-size: clamp(1rem, 1.5vw, 1.3rem); 
+  max-width: 280px; 
+  color: var(--primary); 
+  text-align: center;
+  line-height: 1.2;
+}
 .btn-cta-light {
-  min-height: 56px;
-  white-space: nowrap; flex-shrink: 0;
+  min-height: 38px;
+  white-space: nowrap;
+  padding: 0.5rem 1rem;
+  font-size: 0.65rem;
 }
 
 @media (max-width: 768px) {
-  .cta-banner { flex-direction: column; text-align: center; }
+  .cta-banner { flex-direction: column; }
   .btn-cta-light { width: 100%; justify-content: center; }
 }
 
