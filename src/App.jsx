@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from '@studio-freight/lenis';
@@ -34,7 +34,7 @@ function App() {
   const appRef      = useRef(null);
   const trackRef    = useRef(null);
   const pinRef      = useRef(null);
-  const hasAnimated = useRef(false);
+  const heroAnimatedRef = useRef(false);
   const heroLogoRef   = useRef(null);
   const footerLogoRef = useRef(null);
 
@@ -53,10 +53,10 @@ function App() {
     return () => lenis.destroy();
   }, []);
 
-  // Intro Animation
+  // Intro Animation - with strict mode guard
   useEffect(() => {
-    if (hasAnimated.current) return;
-    hasAnimated.current = true;
+    if (heroAnimatedRef.current) return;
+    heroAnimatedRef.current = true;
 
     document.body.style.overflow = 'hidden';
 
@@ -67,17 +67,28 @@ function App() {
       }
     });
 
-    tl.to('.preloader-fill', { width: '100%', duration: 0.8, ease: 'power2.inOut' })
-      .to('.preloader', { yPercent: -100, duration: 0.6, ease: 'power3.inOut', delay: 0.2 })
-      .from('.hero-title', { opacity: 0, y: 20, duration: 0.5, ease: 'power2.out' }, '-=0.3')
+    tl.to('.preloader-fill', { width: '100%', duration: 0.6, ease: 'power2.inOut' })
+      .to('.preloader', { yPercent: -100, duration: 0.5, ease: 'power3.inOut', delay: 0.1 })
+      .from('.dynamic-shape', { 
+        scale: 0.3, 
+        opacity: 0,
+        duration: 0.4, 
+        stagger: 0.06,
+        ease: 'back.out(1.7)' 
+      }, '-=0.25')
+      .from('.hero-title', { opacity: 0, y: 20, duration: 0.4, ease: 'power2.out' }, '-=0.2')
       .from('.hero-sub, .hero-meta, .hero-ctas, .hero-logo-wrap', { 
         opacity: 0, 
         y: 15, 
-        duration: 0.4, 
-        stagger: 0.05,
+        duration: 0.35, 
+        stagger: 0.04,
         ease: 'power2.out' 
-      }, '-=0.2');
-}, []);
+      }, '-=0.15');
+    
+    return () => {
+      heroAnimatedRef.current = false;
+    };
+  }, []);
 
   // Navbar Scroll Logic
   useEffect(() => {
