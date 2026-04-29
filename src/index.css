@@ -41,7 +41,7 @@ body {
 
 .dynamic-shape {
   position: absolute;
-  opacity: 0;
+  opacity: 0.5;
   will-change: transform, opacity;
   border-radius: 50%;
   transform: translateZ(0);
@@ -94,8 +94,8 @@ body {
   }
   
   .dynamic-shape {
-    opacity: 0.6;
-    transform: translateZ(0);
+    opacity: 0.5;
+    will-change: transform, opacity;
     animation: shape-float 8s ease-in-out infinite;
   }
 

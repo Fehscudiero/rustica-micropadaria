@@ -69,13 +69,11 @@ function App() {
 
     tl.to('.preloader-fill', { width: '100%', duration: 0.6, ease: 'power2.inOut' })
       .to('.preloader', { yPercent: -100, duration: 0.5, ease: 'power3.inOut', delay: 0.1 })
-      .from('.dynamic-shape', { 
-        scale: 0.3, 
-        opacity: 0,
-        duration: 0.4, 
-        stagger: 0.06,
-        ease: 'back.out(1.7)' 
-      }, '-=0.25')
+      .fromTo('.dynamic-shape', 
+        { opacity: 0.5, scale: 0.3 },
+        { opacity: 1, scale: 1, duration: 0.5, stagger: 0.06, ease: 'back.out(1.7)' },
+        '-=0.25'
+      )
       .from('.hero-title', { opacity: 0, y: 20, duration: 0.4, ease: 'power2.out' }, '-=0.2')
       .from('.hero-sub, .hero-meta, .hero-ctas, .hero-logo-wrap', { 
         opacity: 0, 
