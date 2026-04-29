@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function Gallery({ content }) {
   return (
-    <section id="espaco" className="section-pad" style={{ background: 'var(--bg-warm)' }}>
+    <section id="espaco" className="section-pad">
       <div className="container">
         <div className="reveal" style={{ textAlign: 'center', marginBottom: '4rem' }}>
           <p className="story-label" style={{ textAlign: 'center' }}>{content.label}</p>
