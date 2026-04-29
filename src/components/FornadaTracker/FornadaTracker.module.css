@@ -43,14 +43,14 @@
   width: 10px;
   height: 10px;
   flex-shrink: 0;
-  background: #1B3022;
+  background: #E53935;
   border-radius: 50%;
 }
 
 .rustica-fornada__pulse {
   position: absolute;
   inset: 0;
-  background: #1B3022;
+  background: #E53935;
   border-radius: 50%;
   animation: rustica-pulse 2.8s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
 }
