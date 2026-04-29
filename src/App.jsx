@@ -67,133 +67,17 @@ function App() {
       }
     });
 
-    tl.to('.preloader-fill', { width: '100%', duration: 1.5, ease: 'power2.inOut' })
-      .fromTo('.preloader-logo', { scale: 0.7, opacity: 0 }, { scale: 1, opacity: 1, duration: 1, ease: 'back.out(1.4)' }, 0.2)
-      .from('.preloader-text', { opacity: 0, y: 10, duration: 0.6 }, 0.5)
-      .add(() => { window.scrollTo({ top: 0, behavior: 'instant' }); })
-      .to('.preloader', { yPercent: -100, duration: 1.2, ease: 'power4.inOut', delay: 0.3 })
-      .from('.hero-title-word', { y: 140, opacity: 0, rotationX: -40, stagger: 0.12, duration: 1.2, ease: 'power4.out' }, '-=0.4')
-      .from('.hero-sub', { y: 40, opacity: 0, duration: 0.8 }, '-=0.6')
-      .from('.hero-meta-item', { y: 20, opacity: 0, stagger: 0.1, duration: 0.6 }, '-=0.5')
-      .from('.hero-ctas', { y: 30, opacity: 0, duration: 0.6 }, '-=0.4')
-      .from('.hero-logo-wrap', { scale: 0.7, opacity: 0, duration: 1.2, ease: 'power3.out' }, '-=1');
-  }, []);
-
-  // Scroll Animations
-  useLayoutEffect(() => {
-    if (!loaded) return;
-    const ctx = gsap.context(() => {
-
-      // Reveal items on scroll
-      gsap.utils.toArray('.reveal').forEach(el => {
-        gsap.from(el, {
-          y: 60,
-          opacity: 0,
-          duration: 1,
-          ease: 'power3.out',
-          scrollTrigger: { trigger: el, start: 'top 88%' }
-        });
-      });
-
-      const mm = gsap.matchMedia();
-
-      // Desktop: Horizontal Scroll + Parallax
-      mm.add('(min-width: 769px)', () => {
-        if (trackRef.current && pinRef.current) {
-          const dist = trackRef.current.scrollWidth - window.innerWidth;
-          gsap.to(trackRef.current, {
-            x: -dist,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: pinRef.current,
-              pin: true,
-              scrub: 1.5,
-              start: 'top top',
-              end: () => `+=${dist}`,
-              invalidateOnRefresh: true,
-            }
-          });
-        }
-
-        gsap.to('.hero-logo-wrap', {
-          y: 120,
-          ease: 'none',
-          scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true }
-        });
-      });
-
-      // Mobile: Simple Reveals
-      mm.add('(max-width: 768px)', () => {
-        if (trackRef.current) {
-          const cards = trackRef.current.querySelectorAll('.menu-card');
-          cards.forEach(card => {
-            gsap.from(card, {
-              y: 50,
-              opacity: 0,
-              duration: 0.8,
-              ease: 'power3.out',
-              scrollTrigger: { trigger: card, start: 'top 90%' }
-            });
-          });
-        }
-      });
-
-      // Gallery Entrance
-      gsap.from('.mosaic-item', {
-        y: 80, opacity: 0, stagger: 0.2, duration: 1, ease: 'power3.out',
-        scrollTrigger: { trigger: '.mosaic-grid', start: 'top 80%' }
-      });
-
-      // Footer Logo Entrance
-      gsap.from('.footer-logo-big', {
-        y: 100, opacity: 0, scale: 0.7, duration: 1.5, ease: 'power3.out',
-        scrollTrigger: { trigger: '.footer-top', start: 'top 80%' }
-      });
-
-      // Dynamic background shapes - optimized with will-change and GPU
-      const shapes = gsap.utils.toArray('.dynamic-shape');
-      
-      // Check for reduced motion preference
-      const MotionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
-      if (MotionPreference.matches) return;
-
-      // Desktop only entrance animation - mobile uses CSS only
-      if (window.innerWidth >= 769) {
-        shapes.forEach((shape, i) => {
-          gsap.fromTo(shape, 
-            { scale: 0.3, opacity: 0 },
-            { 
-              scale: 1,
-              opacity: 0.5,
-              duration: 0.8,
-              ease: 'power2.out',
-              scrollTrigger: {
-                trigger: shape,
-                start: 'top 85%',
-                toggleActions: 'play none none reverse'
-              }
-            }
-          );
-        });
-
-        // Minimal parallax - only on desktop with proper GPU
-        shapes.forEach((shape, i) => {
-          gsap.to(shape, {
-            y: (i % 2 === 0 ? -1 : 1) * (50 + i * 20),
-            ease: 'none',
-            scrollTrigger: {
-              trigger: 'body',
-              start: 'top top',
-              end: 'bottom bottom',
-              scrub: 0.5,
-            }
-          });
-        });
-      }
-
-    }, appRef);
-    return () => ctx.revert();
-  }, [loaded]);
+    tl.to('.preloader-fill', { width: '100%', duration: 0.8, ease: 'power2.inOut' })
+      .to('.preloader', { yPercent: -100, duration: 0.6, ease: 'power3.inOut', delay: 0.2 })
+      .from('.hero-title', { opacity: 0, y: 20, duration: 0.5, ease: 'power2.out' }, '-=0.3')
+      .from('.hero-sub, .hero-meta, .hero-ctas, .hero-logo-wrap', { 
+        opacity: 0, 
+        y: 15, 
+        duration: 0.4, 
+        stagger: 0.05,
+        ease: 'power2.out' 
+      }, '-=0.2');
+}, []);
 
   // Navbar Scroll Logic
   useEffect(() => {
