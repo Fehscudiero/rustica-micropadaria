@@ -105,13 +105,13 @@ export const identityPhrase = "Acreditamos que comer bem é um ato gentil — co
 export const storyContent = {
   label: "Nossa Essência",
   title: "Por @flaviaounada e @helena_doliveira",
-  text:  "A Rústica nasceu de uma ideia simples: pão de verdade, sem pressa e sem atalhos. Fermentação natural de 48 horas, produção em lotes limitados e atenção a cada detalhe do processo. Não é escala — é cuidado.",
+  text:  { text: "A Rústica nasceu de uma ideia simples: pão de verdade, sem pressa e sem atalhos. Fermentação natural de 48 horas, produção em lotes limitados e atenção a cada detalhe do processo. Não é escala — é cuidado.", animate: true },
   image:    creatorsImg,
-  imageAlt: "Flávia e Helena, fundadoras da Rústica Micropadaria",  // ← Troque ao mudar a foto
+  imageAlt: "Flávia e Helena, fundadoras da Rústica Micropadaria",
   stats: [
-    { value: "48h",  label: "Fermentação" },
-    { value: "100%", label: "Natural" },
-    { value: "0",    label: "Conservantes" },
+    { value: "48h",  label: "Fermentação", animate: true },
+    { value: "100%", label: "Natural", animate: true },
+    { value: "0",    label: "Conservantes", animate: false },
   ],
 };
 
