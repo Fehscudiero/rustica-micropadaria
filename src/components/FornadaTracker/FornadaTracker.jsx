@@ -18,25 +18,38 @@ export default function FornadaTracker({ productName = "Pão de Castanhas", what
   const [nomeExibicao, setNomeExibicao] = useState(productName);
   const [estaVisivel, setEstaVisivel] = useState(false);
   
-  // NOVO: Estado que guarda a diferença entre o relógio real e o do usuário
+  // Offset do relógio (Diferença entre o servidor da Vercel e o PC do usuário)
   const [timeOffset, setTimeOffset] = useState(0);
 
-  // 1. Sincroniza o relógio com o Servidor Mundial assim que o site abre
+  // 1. Sincroniza o relógio com o Servidor da Vercel (À prova de falhas e AdBlocks)
   useEffect(() => {
     let isMounted = true;
+    
     const syncClock = async () => {
       try {
-        const res = await fetch('https://worldtimeapi.org/api/timezone/Etc/UTC');
-        if (!res.ok) return;
-        const data = await res.json();
+        // Faz uma requisição super leve ("HEAD") para o próprio site
+        const res = await fetch(window.location.origin, { 
+          method: 'HEAD', 
+          cache: 'no-store' 
+        });
         
-        // Calcula a diferença entre a hora real e a hora quebrada do PC
-        const realTime = new Date(data.datetime).getTime();
-        if (isMounted) {
-          setTimeOffset(realTime - Date.now());
+        // Pega a data carimbada pelo servidor atômico da Vercel no cabeçalho da resposta
+        const serverDateStr = res.headers.get('Date');
+        
+        if (serverDateStr && isMounted) {
+          const realTime = new Date(serverDateStr).getTime();
+          const localTime = Date.now();
+          const offset = realTime - localTime;
+          
+          setTimeOffset(offset);
+          
+          // Debug visual para vocês conferirem no F12 (Console)
+          console.log(`⏱️ Tempo do Servidor: ${new Date(realTime).toLocaleTimeString()}`);
+          console.log(`⏱️ Tempo do PC Local: ${new Date(localTime).toLocaleTimeString()}`);
+          console.log(`🔧 Correção aplicada (Offset): ${offset / 1000} segundos`);
         }
       } catch (error) {
-        console.warn("Falha ao buscar horário mundial. Usando relógio local.");
+        console.error("Falha ao sincronizar relógio com a Vercel:", error);
       }
     };
     
@@ -44,7 +57,7 @@ export default function FornadaTracker({ productName = "Pão de Castanhas", what
     return () => { isMounted = false; };
   }, []);
 
-  // 2. Escuta o Firebase apenas para pegar o "Horário Alvo"
+  // 2. Escuta o Firebase
   useEffect(() => {
     const q = query(collection(db, 'fornada'), limit(1));
     
@@ -72,12 +85,12 @@ export default function FornadaTracker({ productName = "Pão de Castanhas", what
     return () => unsubscribe();
   }, []);
 
-  // 3. Loop do Cronômetro (Blindado com o Offset)
+  // 3. Loop do Cronômetro com a Correção Ativa
   useEffect(() => {
     if (!fimFornada || !estaVisivel) return;
 
     const atualizarCalculo = () => {
-      // MAGIA AQUI: O 'agora' é corrigido automaticamente usando o offset!
+      // O "agora" soma o offset, empurrando o relógio quebrado do usuário para a hora exata da Vercel
       const agoraCorrigido = Date.now() + timeOffset; 
       const diferencaSegundos = Math.floor((fimFornada - agoraCorrigido) / 1000);
       setTempoRestante(diferencaSegundos);
@@ -89,7 +102,7 @@ export default function FornadaTracker({ productName = "Pão de Castanhas", what
     return () => clearInterval(timerId);
   }, [fimFornada, estaVisivel, timeOffset]);
 
-  // 4. Animação do GSAP
+  // 4. Animação
   useEffect(() => {
     if (estaVisivel && containerRef.current) {
       const ctx = gsap.context(() => {
