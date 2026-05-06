@@ -1,7 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from '@studio-freight/lenis';
+
+// ─── Telas ───────────────────────────────────────────────────
+import PainelFornada from './pages/PainelFornada';
 
 // ─── Dados — edite em src/data.js ────────────────────────────
 import * as content from './data';
@@ -28,7 +32,8 @@ import './index.css';
 
 gsap.registerPlugin(ScrollTrigger);
 
-function App() {
+// ─── Componente Principal do Site (Sua Landing Page) ─────────
+function LandingPage() {
   const [loaded, setLoaded] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const appRef      = useRef(null);
@@ -149,6 +154,18 @@ function App() {
         navigationLogo={content.navigation.logo}
       />
     </div>
+  );
+}
+
+// ─── Roteador Principal ──────────────────────────────────────
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/forno" element={<PainelFornada />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
