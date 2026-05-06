@@ -43,11 +43,12 @@ import macaronsImg      from './assets/sections/menu/macarons.png';
 export const navigation = {
   logo,
   links: [
-    { label: "Nossa História", href: "#historia" },
-    { label: "Cardápio",       href: "#cardapio" },
-    { label: "Nosso Espaço",   href: "#espaco" },
-    { label: "Como Funciona",  href: "#como-funciona" },
-    { label: "Contato",     href: "#contato" },
+    { label: "Fornada Ao VIVO", href: "#hero" },
+    { label: "Nossa História",  href: "#historia" },
+    { label: "Cardápio",        href: "#cardapio" },
+    { label: "Nosso Espaço",    href: "#espaco" },
+    { label: "Como Funciona",   href: "#como-funciona" },
+    { label: "Contato",        href: "#contato" },
   ],
   cta: {
     label: "Fazer Pedido",

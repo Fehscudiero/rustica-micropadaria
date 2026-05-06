@@ -6,7 +6,7 @@ import styles from '../FornadaTracker/FornadaTracker.module.css';
 
 export default function Hero({ content, heroLogoRef, fornadaTracker }) {
   return (
-    <header className="hero">
+    <header id="hero" className="hero">
       <div className="container hero-layout">
         <div>
           <h1 className="hero-title">

@@ -13,7 +13,7 @@ export default function Navbar({ navigation, menuOpen, setMenuOpen }) {
             <a 
               key={i} 
               href={link.href} 
-              className="nav-link" 
+              className={`nav-link ${link.label === 'Fornada Ao VIVO' ? 'nav-link-live' : ''}`}
               onClick={() => setMenuOpen(false)}
             >
               {link.label}

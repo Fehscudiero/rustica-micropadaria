@@ -111,8 +111,6 @@ function LandingPage() {
         <div className="dynamic-shape dynamic-shape--5" />
       </div>
 
-      <CustomCursor />
-
       <Preloader logo={content.navigation.logo} />
 
       <Navbar
@@ -161,6 +159,7 @@ function LandingPage() {
 function App() {
   return (
     <BrowserRouter>
+      <CustomCursor />
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/forno" element={<PainelFornada />} />

@@ -304,6 +304,13 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
 }
 .nav-link:hover { color: var(--primary); }
 .nav-link:hover::after { width: 100%; }
+.nav-link-live {
+  color: var(--accent) !important;
+  font-weight: 700 !important;
+}
+.nav-link-live::after {
+  background: var(--accent) !important;
+}
 
 .btn-cta, .btn-cta-light {
   background: var(--primary); color: #fff;
@@ -463,7 +470,7 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
 
 .hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
 
-.hero-tracker-wrap { margin-top: 0.5rem; margin-left: 48px; }
+.hero-tracker-wrap { margin-top: 0.5rem; }
 
 /* Hero logo */
 .hero-logo-wrap { display: flex; align-items: center; justify-content: center; }
@@ -503,10 +510,9 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
 .hero-tracker-wrap {
   margin-top: 2.5rem;
   margin-bottom: 1.5rem;
-  margin-left: 48px;
 }
 @media (max-width: 1024px) {
-  .hero-tracker-wrap { display: flex; justify-content: center; margin-bottom: 0; margin-left: 24px; }
+  .hero-tracker-wrap { display: flex; justify-content: center; margin-bottom: 0; }
 }
 .hero-layout { 
   display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; 
