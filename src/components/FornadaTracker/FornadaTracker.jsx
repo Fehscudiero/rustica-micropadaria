@@ -5,47 +5,51 @@ import { useHighPerfTimer } from '../../hooks/useHighPerfTimer';
 import { useMagneticElement } from '../../hooks/useMagneticElement';
 import { Clock } from 'lucide-react';
 import { collection, onSnapshot, query, limit } from 'firebase/firestore';
-import { db } from '../../services/firebase'; // Ajuste o caminho se necessário
+import { db } from '../../services/firebase';
 
+// Mantemos o productName como um fallback (valor padrão)
 export default function FornadaTracker({ productName = "Pão de Castanhas", whatsapp = "https://wa.me/5511993968023" }) {
   const containerRef = useRef(null);
   const ctaRef = useRef(null);
-
-  // Timer refs: one for display (DOM injection), one for screen readers (aria-live)
   const timerDisplayRef = useRef(null);
   const timerSrRef = useRef(null);
 
   const [tempoRestante, setTempoRestante] = useState(0);
+  
+  // NOVO: Estado para armazenar o nome que vem do Firebase
+  const [nomeExibicao, setNomeExibicao] = useState(productName);
 
-  // Escuta o Firebase em tempo real (zero re-renders em loop, roda apenas quando a cozinha atualiza)
   useEffect(() => {
     const q = query(collection(db, 'fornada'), limit(1));
     
     const unsubscribe = onSnapshot(q, (snapshot) => {
       if (!snapshot.empty) {
         const data = snapshot.docs[0].data();
+        
+        // 1. Atualiza o Título vindo do Banco
+        // Se houver um título no banco, usamos ele. Se não, usamos a prop inicial.
+        if (data.titulo) {
+          setNomeExibicao(data.titulo);
+        } else {
+          setNomeExibicao(productName);
+        }
+
+        // 2. Atualiza o Tempo
         if (data.horario_fim) {
           const fim = new Date(data.horario_fim).getTime();
           const agora = new Date().getTime();
-          // Calcula diferença em segundos e garante que não fique negativo
           const diferencaSegundos = Math.max(0, Math.floor((fim - agora) / 1000));
-          
           setTempoRestante(diferencaSegundos);
         }
       }
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [productName]); // Adicionado productName como dependência por boa prática
 
-  // High-perf timer
-  // Nota: Garanta que lá dentro do seu useHighPerfTimer ele reaja quando o "tempoRestante" mudar de 0 para o tempo real.
   useHighPerfTimer(timerDisplayRef, timerSrRef, tempoRestante);
-
-  // Magnetic button physics
   useMagneticElement(ctaRef, 0.28);
 
-  // GSAP entrance animation
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.fromTo(
@@ -58,40 +62,28 @@ export default function FornadaTracker({ productName = "Pão de Castanhas", what
     return () => ctx.revert();
   }, []);
 
-  // Oculta o componente se o timer estiver zerado para não gerar frustração
   if (tempoRestante === 0) return null;
 
   return (
     <article
       className={styles['rustica-fornada__container']}
       ref={containerRef}
-      aria-label={`Status ao vivo da fornada de ${productName}`}
+      aria-label={`Status ao vivo da fornada de ${nomeExibicao}`}
     >
-      {/* Status Header */}
       <div className={styles['rustica-fornada__header']}>
-        <div
-          className={styles['rustica-fornada__indicator']}
-          aria-hidden="true"
-        >
+        <div className={styles['rustica-fornada__indicator']} aria-hidden="true">
           <span className={styles['rustica-fornada__pulse']} />
         </div>
         <span className={styles['rustica-fornada__title']}>Fornada ao Vivo</span>
       </div>
 
-      {/* Product Name */}
-      <h4 className={styles['rustica-fornada__product']}>{productName}</h4>
+      {/* AGORA USA O ESTADO DINÂMICO */}
+      <h4 className={styles['rustica-fornada__product']}>{nomeExibicao}</h4>
 
-      {/* Timer Box */}
       <div className={styles['rustica-fornada__timer-box']}>
-        <Clock
-          size={16}
-          strokeWidth={2.5}
-          className={styles['rustica-fornada__icon']}
-          aria-hidden="true"
-        />
+        <Clock size={16} strokeWidth={2.5} className={styles['rustica-fornada__icon']} aria-hidden="true" />
         <span className={styles['rustica-fornada__timer-text']}>
           Saindo em:{' '}
-          {/* aria-hidden: the visual timer is meaningless to screen readers mid-update */}
           <strong
             ref={timerDisplayRef}
             className={styles['rustica-fornada__timer-digits']}
@@ -102,7 +94,6 @@ export default function FornadaTracker({ productName = "Pão de Castanhas", what
         </span>
       </div>
 
-      {/* aria-live: screen readers receive a calm, rate-limited update */}
       <span
         ref={timerSrRef}
         className={styles['rustica-fornada__sr-only']}
@@ -110,14 +101,13 @@ export default function FornadaTracker({ productName = "Pão de Castanhas", what
         aria-atomic="true"
       />
 
-      {/* Magnetic CTA */}
       <a
         href={whatsapp}
         target="_blank"
         rel="noopener noreferrer"
         className={styles['rustica-fornada__cta']}
         ref={ctaRef}
-        aria-label={`Reservar ${productName} via WhatsApp`}
+        aria-label={`Reservar ${nomeExibicao} via WhatsApp`}
       >
         <span aria-hidden="true" className={styles['rustica-fornada__cta-icon']}>→</span>
         <span className={styles['rustica-fornada__cta-text']}>Reservar Unidade</span>

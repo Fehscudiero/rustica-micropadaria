@@ -2,13 +2,15 @@ import React, { useState, useEffect, useRef } from 'react';
 import { collection, getDocs, updateDoc, doc, addDoc } from 'firebase/firestore';
 import { db } from '../services/firebase';
 import { gsap } from 'gsap';
-import * as content from '../data'; 
+import * as content from '../data';
 
 export default function PainelFornada() {
   const [loading, setLoading] = useState(false);
   const [sucesso, setSucesso] = useState(false);
   const [minutosManuais, setMinutosManuais] = useState('');
-  
+  const [tituloPao, setTituloPao] = useState('');
+
+  const mainRef = useRef(null); 
   const cardRef = useRef(null);
 
   const theme = {
@@ -16,8 +18,10 @@ export default function PainelFornada() {
     primaryLight: '#2D4C38',
     accent: '#C8956C',
     accentWarm: '#D4A574',
+    olivaDark: '#3D4726', 
+    olivaLight: '#A9BA9D',
+    bgCustom: '#D7E692',
     bgCream: '#FAF7F2',
-    bgWarm: '#F5EEE6',
     textMain: '#1A1A1A',
     textMuted: '#6B6B6B',
     radius: '20px',
@@ -27,42 +31,62 @@ export default function PainelFornada() {
   };
 
   const presets = [
-    { label: 'Rápida', desc: '30 min', value: 30, icon: '🥖' },
-    { label: 'Padrão', desc: '1 hora', value: 60, icon: '🥐' },
-    { label: 'Tradicional', desc: '2 horas', value: 120, icon: '🍞' },
-    { label: 'Especial', desc: '2h 30m', value: 150, icon: '🥯' },
+    { label: 'Rápida -', desc: '30 min', value: 30, icon: '🥖' },
+    { label: 'Padrão -', desc: '1 hora', value: 60, icon: '🥐' },
+    { label: 'Tradicional -', desc: '2 horas', value: 120, icon: '🍞' },
+    { label: 'Especial -', desc: '2h 30m', value: 150, icon: '🥯' },
   ];
 
   useEffect(() => {
-    // Garante que o GSAP anime o card na entrada
-    if (cardRef.current) {
-      gsap.fromTo(cardRef.current, 
-        { y: 40, opacity: 0 }, 
-        { y: 0, opacity: 1, duration: 1.2, ease: 'expo.out' }
+    let ctx = gsap.context(() => {
+      
+      gsap.fromTo(cardRef.current,
+        { y: 60, opacity: 0, scale: 0.95 },
+        { y: 0, opacity: 1, scale: 1, duration: 1.2, ease: 'expo.out' }
       );
-    }
+
+      gsap.to(".bubble", {
+        y: "random(-40, 40)",
+        x: "random(-40, 40)",
+        duration: "random(4, 8)",
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+        stagger: {
+          each: 0.5,
+          from: "random"
+        }
+      });
+
+    }, mainRef);
+
+    return () => ctx.revert();
   }, []);
 
-  const atualizarBanco = async (dataISO) => {
+  const atualizarBanco = async (dataISO, titulo) => {
     setLoading(true);
     setSucesso(false);
     try {
       const fornadaCol = collection(db, 'fornada');
       const snapshot = await getDocs(fornadaCol);
+      const payload = { 
+        horario_fim: dataISO,
+        titulo: titulo || 'Pão Fresquinho'
+      };
 
       if (snapshot.empty) {
-        await addDoc(fornadaCol, { horario_fim: dataISO });
+        await addDoc(fornadaCol, payload);
       } else {
         const docRef = doc(db, 'fornada', snapshot.docs[0].id);
-        await updateDoc(docRef, { horario_fim: dataISO });
+        await updateDoc(docRef, payload);
       }
-      
+
       setSucesso(true);
-      if (window.navigator.vibrate) window.navigator.vibrate(50); 
+      if (window.navigator.vibrate) window.navigator.vibrate(50);
       setTimeout(() => setSucesso(false), 4000);
     } catch (error) {
-      console.error("Erro ao atualizar Firebase:", error);
-      alert("Erro na conexão com o banco de dados.");
+      console.error("Erro no Firebase:", error);
+      alert("Erro na conexão.");
     } finally {
       setLoading(false);
     }
@@ -73,13 +97,21 @@ export default function PainelFornada() {
     if (isNaN(min) || min <= 0) return;
     const agora = new Date();
     agora.setMinutes(agora.getMinutes() + min);
-    atualizarBanco(agora.toISOString());
+    atualizarBanco(agora.toISOString(), tituloPao);
   };
 
   return (
-    <main className="panel-container">
+    <main className="panel-container" ref={mainRef}>
+      <div className="bubbles-background">
+        <div className="bubble b1"></div>
+        <div className="bubble b2"></div>
+        <div className="bubble b3"></div>
+        <div className="bubble b4"></div>
+        <div className="bubble b5"></div>
+        <div className="bubble b6"></div>
+      </div>
+
       <div ref={cardRef} className="panel-card">
-        
         <header className="panel-header">
           {content.navigation?.logo && (
             <img src={content.navigation.logo} alt="Rústica" className="panel-logo" />
@@ -87,6 +119,18 @@ export default function PainelFornada() {
           <h1 className="panel-title">Sistema de Timer</h1>
           <p className="panel-subtitle">Painel de Gestão da Cozinha</p>
         </header>
+
+        <section className="manual-section" style={{ marginBottom: '24px' }}>
+          <h2 className="section-title">O que está saindo?</h2>
+          <input
+            type="text"
+            className="input-full"
+            value={tituloPao}
+            onChange={(e) => setTituloPao(e.target.value)}
+            placeholder="Nome do pão..."
+            disabled={loading}
+          />
+        </section>
 
         <section className="presets-grid">
           {presets.map((p) => (
@@ -108,14 +152,14 @@ export default function PainelFornada() {
         <section className="manual-section">
           <h2 className="section-title">Tempo Personalizado</h2>
           <div className="input-group">
-            <input 
-              type="number" 
+            <input
+              type="number"
               value={minutosManuais}
               onChange={(e) => setMinutosManuais(e.target.value)}
               placeholder="Minutos..."
               disabled={loading}
             />
-            <button 
+            <button
               className="btn-primary"
               onClick={() => iniciarFornada(minutosManuais)}
               disabled={!minutosManuais || loading}
@@ -125,11 +169,11 @@ export default function PainelFornada() {
           </div>
         </section>
 
-        <button 
-          className="btn-reset" 
+        <button
+          className="btn-reset"
           onClick={() => {
-            if(window.confirm("Deseja ocultar o aviso do site?")) {
-              atualizarBanco(new Date(0).toISOString());
+            if (window.confirm("Deseja ocultar o aviso do site?")) {
+              atualizarBanco(new Date(0).toISOString(), "");
             }
           }}
           disabled={loading}
@@ -139,89 +183,122 @@ export default function PainelFornada() {
 
         <div className="status-container">
           {loading && <div className="loader">Sincronizando...</div>}
-          {sucesso && <div className="success-msg">✓ Site atualizado ao vivo!</div>}
+          {sucesso && <div className="success-msg">✓ Site atualizado!</div>}
         </div>
       </div>
 
       <style>{`
         .panel-container {
+          position: relative;
           display: flex;
           min-height: 100vh;
-          background: ${theme.bgWarm};
-          background-image: radial-gradient(${theme.accent}22 1px, transparent 1px);
-          background-size: 24px 24px;
+          background-color: ${theme.bgCustom};
           padding: 20px;
           align-items: center;
           justify-content: center;
           font-family: ${theme.fontBody};
-          cursor: auto !important; /* Força o cursor do sistema a aparecer */
+          overflow: hidden;
+          cursor: default !important;
         }
+
+        .bubbles-background {
+          position: absolute;
+          top: 0; left: 0; width: 100%; height: 100%;
+          z-index: 0;
+          pointer-events: none;
+        }
+
+        .bubble {
+          position: absolute;
+          border-radius: 50%;
+          filter: blur(60px);
+          opacity: 0.6;
+          will-change: transform;
+        }
+        
+        .b1 { width: 450px; height: 450px; background: ${theme.olivaDark}; top: -150px; left: -100px; }
+        .b2 { width: 350px; height: 350px; background: ${theme.olivaLight}; bottom: 0%; right: -50px; }
+        .b3 { width: 250px; height: 250px; background: ${theme.olivaDark}; top: 15%; right: 5%; opacity: 0.3; }
+        .b4 { width: 380px; height: 380px; background: #ffffff; bottom: -100px; left: 10%; opacity: 0.25; }
+        .b5 { width: 180px; height: 180px; background: ${theme.olivaDark}; top: 45%; left: -30px; }
+        .b6 { width: 300px; height: 300px; background: ${theme.olivaLight}; top: -20px; left: 30%; opacity: 0.4; }
 
         .panel-card {
+          position: relative;
+          z-index: 10;
           width: 100%;
-          max-width: 480px;
-          background: #ffffff;
+          max-width: 460px;
+          background: rgba(255, 255, 255, 0.88);
+          backdrop-filter: blur(15px);
           padding: 40px 32px;
           border-radius: ${theme.radiusLg};
-          box-shadow: 0 20px 50px rgba(27, 48, 34, 0.08);
+          box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12);
           border: 1px solid rgba(255, 255, 255, 0.5);
-          cursor: auto !important;
         }
 
-        .panel-header { text-align: center; margin-bottom: 40px; cursor: auto; }
-        .panel-logo { width: 120px; margin: 0 auto 20px; display: block; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.05)); }
-        .panel-title { font-family: ${theme.fontDisplay}; font-size: 32px; color: ${theme.primary}; margin: 0; }
-        .panel-subtitle { color: ${theme.textMuted}; font-size: 14px; margin-top: 8px; }
+        .panel-header { 
+          text-align: center; 
+          margin-bottom: 30px; 
+        }
+
+        /* LOGO CENTRALIZADO */
+        .panel-logo { 
+          display: block;
+          width: 90px; 
+          margin: 0 auto 15px; 
+          filter: drop-shadow(0 4px 8px rgba(0,0,0,0.05));
+        }
+
+        .panel-title { font-family: ${theme.fontDisplay}; font-size: 28px; color: ${theme.primary}; margin: 0; }
+        .panel-subtitle { color: ${theme.textMuted}; font-size: 14px; margin-top: 5px; }
 
         .presets-grid {
           display: grid;
-          grid-template-columns: repeat(2, 1fr);
+          grid-template-columns: 1fr 1fr;
           gap: 12px;
-          margin-bottom: 32px;
+          margin-bottom: 24px;
         }
 
         .preset-button {
           display: flex;
           align-items: center;
-          gap: 12px;
-          padding: 20px 16px;
-          background: ${theme.bgCream};
-          border: 1px solid ${theme.bgWarm};
+          gap: 10px;
+          padding: 18px 14px;
+          background: #fff;
+          border: 1px solid rgba(0,0,0,0.06);
           border-radius: ${theme.radius};
           cursor: pointer !important;
-          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-          text-align: left;
+          transition: all 0.3s ease;
+        }
+        .preset-button:hover { 
+          transform: translateY(-3px); 
+          box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+          border-color: ${theme.accent};
         }
 
-        .preset-button:active { transform: scale(0.96); background: ${theme.bgWarm}; }
-        .preset-icon { font-size: 24px; }
-        .preset-label { display: block; font-weight: 700; color: ${theme.primary}; font-size: 15px; }
-        .preset-desc { font-size: 12px; color: ${theme.accent}; font-weight: 500; }
-
-        .section-title { font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: ${theme.textMuted}; margin-bottom: 12px; font-weight: 800; padding-left: 4px;}
-
-        .input-group {
-          display: flex;
-          gap: 8px;
-          margin-bottom: 24px;
-        }
-
-        input {
-          flex: 1;
-          padding: 18px 20px;
+        .input-full {
+          width: 100%;
+          padding: 16px;
           border-radius: ${theme.radius};
-          border: 2px solid ${theme.bgWarm};
-          background: ${theme.bgCream};
+          border: 2px solid rgba(0,0,0,0.06);
           font-size: 16px;
           outline: none;
-          transition: border-color 0.2s;
+          background: #fff;
+          cursor: text !important;
+        }
+        .input-full:focus { border-color: ${theme.accent}; }
+
+        .input-group { display: flex; gap: 8px; margin-bottom: 20px; }
+        input[type="number"] {
+          flex: 1;
+          padding: 16px;
+          border-radius: ${theme.radius};
+          border: 2px solid rgba(0,0,0,0.06);
           cursor: text !important;
         }
 
-        input:focus { border-color: ${theme.accent}; }
-
         .btn-primary {
-          background: ${theme.accent};
+          background: ${theme.primary};
           color: white;
           border: none;
           padding: 0 24px;
@@ -233,36 +310,21 @@ export default function PainelFornada() {
         .btn-reset {
           width: 100%;
           background: transparent;
-          border: 1px solid #e6394633;
+          border: 1px solid rgba(230, 57, 70, 0.2);
           color: #e63946;
-          padding: 16px;
+          padding: 14px;
           border-radius: ${theme.radius};
-          font-size: 13px;
+          font-size: 12px;
           font-weight: 700;
           cursor: pointer !important;
-          transition: background 0.2s;
         }
 
-        .btn-reset:active { background: #e6394611; }
-
-        .status-container { height: 40px; margin-top: 20px; display: flex; justify-content: center; align-items: center; }
-        .success-msg { color: ${theme.primary}; font-weight: 700; font-size: 14px; animation: fadeInUp 0.5s ease; }
-        
-        .loader { color: ${theme.accent}; font-weight: 600; font-size: 14px; }
-
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .status-container { height: 30px; margin-top: 15px; text-align: center; }
+        .success-msg { color: ${theme.primary}; font-weight: 700; }
+        .loader { color: ${theme.accent}; font-weight: 600; }
 
         @media (max-width: 440px) {
           .presets-grid { grid-template-columns: 1fr; }
-          .panel-card { padding: 32px 20px; }
-          .panel-title { font-size: 26px; }
-          .input-group { flex-direction: column; }
-          .btn-primary { padding: 18px; }
-        }
-
-        .preset-button:hover {
-          box-shadow: 0 10px 20px rgba(200, 149, 108, 0.1);
-          border-color: ${theme.accent}44;
         }
       `}</style>
     </main>
