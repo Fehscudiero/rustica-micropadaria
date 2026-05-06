@@ -538,10 +538,14 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
 .hero-ctas { display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center; }
 .hero-whatsapp-link { 
   display: inline-flex; align-items: center; gap: 0.4rem;
-  font-size: 0.82rem; color: var(--text-muted); 
+  font-size: 0.82rem; color: #000; 
   padding: 0.85rem 2rem;
   border-radius: 100px;
+  border: 2px solid #1b3022;
   transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.hero-whatsapp-link svg {
+  color: #25D366;
 }
 
 .hero-whatsapp-link:hover {
