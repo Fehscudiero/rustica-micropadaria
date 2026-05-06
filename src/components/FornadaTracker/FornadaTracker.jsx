@@ -13,10 +13,13 @@ export default function FornadaTracker({ productName = "Pão de Castanhas", what
   const timerDisplayRef = useRef(null);
   const timerSrRef = useRef(null);
 
+  // Estados limpos e separados
+  const [fimFornada, setFimFornada] = useState(null);
   const [tempoRestante, setTempoRestante] = useState(null);
   const [nomeExibicao, setNomeExibicao] = useState(productName);
-  const [estaVisivel, setEstaVisivel] = useState(true);
+  const [estaVisivel, setEstaVisivel] = useState(false); // Começa invisível até ter dados válidos
 
+  // 1. Escuta o Firebase apenas para pegar o "Horário Alvo"
   useEffect(() => {
     const q = query(collection(db, 'fornada'), limit(1));
     
@@ -24,48 +27,67 @@ export default function FornadaTracker({ productName = "Pão de Castanhas", what
       if (!snapshot.empty) {
         const data = snapshot.docs[0].data();
         
-        // CORREÇÃO: Verifica se a data é válida (não 1970) e se a flag visivel é true
-        const dataValida = data.horario_fim && new Date(data.horario_fim).getTime() > 10000;
-        setEstaVisivel(data.visivel === true && dataValida);
-
         if (data.titulo) setNomeExibicao(data.titulo);
 
-        if (data.horario_fim) {
-          const fim = new Date(data.horario_fim).getTime();
-          const atualizarCalculo = () => {
-            const agora = new Date().getTime();
-            const diferenca = Math.floor((fim - agora) / 1000);
-            setTempoRestante(diferenca);
-          };
-          atualizarCalculo();
-          const timerId = setInterval(atualizarCalculo, 1000);
-          return () => clearInterval(timerId);
+        const dataFimMs = new Date(data.horario_fim).getTime();
+        
+        // Verifica se é a data de Reset (1970) que enviamos pelo botão de Desligar (10000ms = margem de segurança)
+        const dataValida = data.horario_fim && dataFimMs > 10000;
+        
+        // Se a data for inválida (foi desligado no painel), esconde o componente
+        if (!dataValida || data.visivel === false) {
+          setEstaVisivel(false);
+          setFimFornada(null);
+        } else {
+          setFimFornada(dataFimMs);
+          setEstaVisivel(true);
         }
       } else {
         setEstaVisivel(false);
       }
     });
-    return () => unsubscribe();
+
+    return () => unsubscribe(); // Cleanup correto da inscrição do Firebase
   }, []);
 
-  const jaSaiu = tempoRestante !== null && tempoRestante <= 0;
-
-  useHighPerfTimer(timerDisplayRef, timerSrRef, tempoRestante !== null ? Math.abs(tempoRestante) : 0);
-  useMagneticElement(ctaRef, 0.28);
-
+  // 2. Loop do Cronômetro (Totalmente isolado do Firebase)
   useEffect(() => {
-    if (estaVisivel) {
+    if (!fimFornada || !estaVisivel) return;
+
+    const atualizarCalculo = () => {
+      const agora = Date.now();
+      const diferencaSegundos = Math.floor((fimFornada - agora) / 1000);
+      setTempoRestante(diferencaSegundos);
+    };
+
+    atualizarCalculo(); // Dispara imediatamente para não ter delay de 1s
+    const timerId = setInterval(atualizarCalculo, 1000);
+
+    // Cleanup perfeito: destrói o intervalo se o componente desmontar ou se a data alvo mudar
+    return () => clearInterval(timerId);
+  }, [fimFornada, estaVisivel]);
+
+  // 3. Animação do GSAP
+  useEffect(() => {
+    if (estaVisivel && containerRef.current) {
       const ctx = gsap.context(() => {
         gsap.fromTo(containerRef.current,
           { y: 60, opacity: 0, scale: 0.94 },
-          { y: 0, opacity: 1, scale: 1, duration: 1.4, ease: 'expo.out', delay: 0.4 }
+          { y: 0, opacity: 1, scale: 1, duration: 1.4, ease: 'expo.out', delay: 0.2 } // Reduzi o delay levemente para parecer mais responsivo
         );
       }, containerRef);
-      return () => ctx.revert();
+      return () => ctx.revert(); // Previne conflitos de animação se o React fizer re-render rápido
     }
   }, [estaVisivel]);
 
-  // Se não estiver visível ou não tiver tempo, não renderiza
+  // Derivando estado: Não precisamos de um useState para o jaSaiu
+  const jaSaiu = tempoRestante !== null && tempoRestante <= 0;
+
+  // Hooks Customizados
+  useHighPerfTimer(timerDisplayRef, timerSrRef, tempoRestante !== null ? Math.abs(tempoRestante) : 0);
+  useMagneticElement(ctaRef, 0.28);
+
+  // Fallback visual: Esconde tudo enquanto não tem os dados
   if (!estaVisivel || tempoRestante === null) return null;
 
   return (
@@ -77,7 +99,9 @@ export default function FornadaTracker({ productName = "Pão de Castanhas", what
           </div>
           <span className={styles['rustica-fornada__title']}>{jaSaiu ? "Fornada Quentinha" : "Fornada ao Vivo"}</span>
         </div>
+        
         <h4 className={styles['rustica-fornada__product']}>{nomeExibicao}</h4>
+        
         <div className={styles['rustica-fornada__timer-box']}>
           <Clock size={16} strokeWidth={2.5} className={styles['rustica-fornada__icon']} />
           <span className={styles['rustica-fornada__timer-text']}>
@@ -85,7 +109,9 @@ export default function FornadaTracker({ productName = "Pão de Castanhas", what
             <strong ref={timerDisplayRef} className={styles['rustica-fornada__timer-digits']}>00:00:00</strong>
           </span>
         </div>
+        
         <span ref={timerSrRef} className={styles['rustica-fornada__sr-only']} aria-live="polite" />
+        
         <a href={whatsapp} target="_blank" rel="noopener noreferrer" className={styles['rustica-fornada__cta']} ref={ctaRef}>
           <span className={styles['rustica-fornada__cta-icon']}>→</span>
           <span className={styles['rustica-fornada__cta-text']}>{jaSaiu ? "Garantir o meu agora" : "Reservar Unidade"}</span>
