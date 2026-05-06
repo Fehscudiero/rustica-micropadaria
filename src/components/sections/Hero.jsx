@@ -1,7 +1,6 @@
 import React from 'react';
 import { ChevronRight, MessageCircle, MapPin, Clock } from 'lucide-react';
 import FornadaTracker from '../FornadaTracker/FornadaTracker';
-// Importamos os estilos para usar a animação da borda
 import styles from '../FornadaTracker/FornadaTracker.module.css'; 
 
 export default function Hero({ content, heroLogoRef, fornadaTracker }) {
@@ -42,28 +41,27 @@ export default function Hero({ content, heroLogoRef, fornadaTracker }) {
         </div>
 
         <div className="hero-logo-wrap">
-          {/* ENVOLVEMOS O LOGO COM O WRAPPER DA BORDA ANIMADA */}
           <div 
             className={styles['rustica-fornada__border-wrapper']} 
-            style={{ borderRadius: '50%', padding: '4px' }}
+            style={{ borderRadius: '50%', padding: '1.5px' }}
           >
             <div 
               className="hero-logo-inner" 
               ref={heroLogoRef}
               style={{ 
                 borderRadius: '50%', 
-                background: '#fff', // Fundo branco para o logo não ficar transparente sobre a animação
+                background: '#fff',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 overflow: 'hidden'
               }}
             >
-              {/* OTIMIZAÇÃO DE LCP APLICADA ABAIXO */}
+              {/* ATENÇÃO: fetchPriority com P maiúsculo para o React renderizar no HTML final */}
               <img 
                 src={content.logo} 
                 alt="Rústica Micropadaria" 
-                fetchpriority="high" 
+                fetchPriority="high" 
                 loading="eager" 
                 decoding="sync"
               />
