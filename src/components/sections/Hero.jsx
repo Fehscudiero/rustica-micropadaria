@@ -59,7 +59,14 @@ export default function Hero({ content, heroLogoRef, fornadaTracker }) {
                 overflow: 'hidden'
               }}
             >
-              <img src={content.logo} alt="Rústica Micropadaria" />
+              {/* OTIMIZAÇÃO DE LCP APLICADA ABAIXO */}
+              <img 
+                src={content.logo} 
+                alt="Rústica Micropadaria" 
+                fetchpriority="high" 
+                loading="eager" 
+                decoding="sync"
+              />
             </div>
           </div>
         </div>
