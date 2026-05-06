@@ -7,16 +7,13 @@ import { Clock } from 'lucide-react';
 import { collection, onSnapshot, query, limit } from 'firebase/firestore';
 import { db } from '../../services/firebase';
 
-// Mantemos o productName como um fallback (valor padrão)
 export default function FornadaTracker({ productName = "Pão de Castanhas", whatsapp = "https://wa.me/5511993968023" }) {
   const containerRef = useRef(null);
   const ctaRef = useRef(null);
   const timerDisplayRef = useRef(null);
   const timerSrRef = useRef(null);
 
-  const [tempoRestante, setTempoRestante] = useState(0);
-  
-  // NOVO: Estado para armazenar o nome que vem do Firebase
+  const [tempoRestante, setTempoRestante] = useState(null);
   const [nomeExibicao, setNomeExibicao] = useState(productName);
 
   useEffect(() => {
@@ -25,29 +22,27 @@ export default function FornadaTracker({ productName = "Pão de Castanhas", what
     const unsubscribe = onSnapshot(q, (snapshot) => {
       if (!snapshot.empty) {
         const data = snapshot.docs[0].data();
-        
-        // 1. Atualiza o Título vindo do Banco
-        // Se houver um título no banco, usamos ele. Se não, usamos a prop inicial.
-        if (data.titulo) {
-          setNomeExibicao(data.titulo);
-        } else {
-          setNomeExibicao(productName);
-        }
+        if (data.titulo) setNomeExibicao(data.titulo);
 
-        // 2. Atualiza o Tempo
         if (data.horario_fim) {
           const fim = new Date(data.horario_fim).getTime();
-          const agora = new Date().getTime();
-          const diferencaSegundos = Math.max(0, Math.floor((fim - agora) / 1000));
-          setTempoRestante(diferencaSegundos);
+          const atualizarCalculo = () => {
+            const agora = new Date().getTime();
+            const diferenca = Math.floor((fim - agora) / 1000);
+            setTempoRestante(diferenca);
+          };
+          atualizarCalculo();
+          const timerId = setInterval(atualizarCalculo, 1000);
+          return () => clearInterval(timerId);
         }
       }
     });
-
     return () => unsubscribe();
-  }, [productName]); // Adicionado productName como dependência por boa prática
+  }, [productName]);
 
-  useHighPerfTimer(timerDisplayRef, timerSrRef, tempoRestante);
+  const jaSaiu = tempoRestante !== null && tempoRestante <= 0;
+
+  useHighPerfTimer(timerDisplayRef, timerSrRef, tempoRestante !== null ? Math.abs(tempoRestante) : 0);
   useMagneticElement(ctaRef, 0.28);
 
   useEffect(() => {
@@ -58,60 +53,59 @@ export default function FornadaTracker({ productName = "Pão de Castanhas", what
         { y: 0, opacity: 1, scale: 1, duration: 1.4, ease: 'expo.out', delay: 0.4 }
       );
     }, containerRef);
-
     return () => ctx.revert();
   }, []);
 
-  if (tempoRestante === 0) return null;
+  if (tempoRestante === null) return null;
 
   return (
-    <article
-      className={styles['rustica-fornada__container']}
-      ref={containerRef}
-      aria-label={`Status ao vivo da fornada de ${nomeExibicao}`}
-    >
-      <div className={styles['rustica-fornada__header']}>
-        <div className={styles['rustica-fornada__indicator']} aria-hidden="true">
-          <span className={styles['rustica-fornada__pulse']} />
-        </div>
-        <span className={styles['rustica-fornada__title']}>Fornada ao Vivo</span>
-      </div>
-
-      {/* AGORA USA O ESTADO DINÂMICO */}
-      <h4 className={styles['rustica-fornada__product']}>{nomeExibicao}</h4>
-
-      <div className={styles['rustica-fornada__timer-box']}>
-        <Clock size={16} strokeWidth={2.5} className={styles['rustica-fornada__icon']} aria-hidden="true" />
-        <span className={styles['rustica-fornada__timer-text']}>
-          Saindo em:{' '}
-          <strong
-            ref={timerDisplayRef}
-            className={styles['rustica-fornada__timer-digits']}
-            aria-hidden="true"
-          >
-            --:--:--
-          </strong>
-        </span>
-      </div>
-
-      <span
-        ref={timerSrRef}
-        className={styles['rustica-fornada__sr-only']}
-        aria-live="polite"
-        aria-atomic="true"
-      />
-
-      <a
-        href={whatsapp}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={styles['rustica-fornada__cta']}
-        ref={ctaRef}
-        aria-label={`Reservar ${nomeExibicao} via WhatsApp`}
+    <div className={styles['rustica-fornada__border-wrapper']}>
+      <article
+        className={`${styles['rustica-fornada__container']} ${jaSaiu ? styles['is-hot'] : ''}`}
+        ref={containerRef}
+        aria-label={`Status da fornada de ${nomeExibicao}`}
       >
-        <span aria-hidden="true" className={styles['rustica-fornada__cta-icon']}>→</span>
-        <span className={styles['rustica-fornada__cta-text']}>Reservar Unidade</span>
-      </a>
-    </article>
+        <div className={styles['rustica-fornada__header']}>
+          {/* A bolinha agora será vermelha via CSS */}
+          <div className={styles['rustica-fornada__indicator']} aria-hidden="true">
+            <span className={styles['rustica-fornada__pulse']} />
+          </div>
+          <span className={styles['rustica-fornada__title']}>
+            {jaSaiu ? "Fornada Quentinha" : "Fornada ao Vivo"}
+          </span>
+        </div>
+
+        <h4 className={styles['rustica-fornada__product']}>{nomeExibicao}</h4>
+
+        <div className={styles['rustica-fornada__timer-box']}>
+          <Clock size={16} strokeWidth={2.5} className={styles['rustica-fornada__icon']} aria-hidden="true" />
+          <span className={styles['rustica-fornada__timer-text']}>
+            {jaSaiu ? "O pão saiu há:" : "Saindo em:"}{' '}
+            <strong
+              ref={timerDisplayRef}
+              className={styles['rustica-fornada__timer-digits']}
+              aria-hidden="true"
+            >
+              00:00:00
+            </strong>
+          </span>
+        </div>
+
+        <span ref={timerSrRef} className={styles['rustica-fornada__sr-only']} aria-live="polite" />
+
+        <a
+          href={whatsapp}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={styles['rustica-fornada__cta']}
+          ref={ctaRef}
+        >
+          <span className={styles['rustica-fornada__cta-icon']}>→</span>
+          <span className={styles['rustica-fornada__cta-text']}>
+            {jaSaiu ? "Garantir o meu agora" : "Reservar Unidade"}
+          </span>
+        </a>
+      </article>
+    </div>
   );
 }
