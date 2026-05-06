@@ -4,49 +4,86 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
-    <!-- 1. CRITICAL PERFORMANCE HINTS -->
-    <!-- Preload do Logo (LCP) - Agora com caminho fixo da pasta public -->
+    <!-- ─── PERFORMANCE CRITICAL (PageSpeed Fix) ────────────────────── -->
+    <!-- Preload do arquivo estático na raiz da pasta public -->
     <link rel="preload" as="image" href="/logo.png" fetchpriority="high" />
     
-    <!-- Preconnect para o Firebase -->
+    <!-- Preconnect Firestore para reduzir a latência de 27s da árvore -->
     <link rel="preconnect" href="https://firestore.googleapis.com" />
     <link rel="dns-prefetch" href="https://firestore.googleapis.com" />
 
-    <!-- Preconnect para Fontes -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-
-    <!-- 2. SEO & META -->
-    <title>Rústica Micropadaria | Pão Artesanal Fermentação Natural 48h | Perdizes SP</title>
-    <meta name="description" content="Micropadaria artesanal em Perdizes, São Paulo. Pão de fermentação natural de 48h, croissant, pizza e macarons feitos à mão. Reserve pelo WhatsApp!" />
-    <meta name="robots" content="index, follow" />
-    <link rel="canonical" href="https://rusticamicropadaria.com/" />
-    <meta name="theme-color" content="#1B3022" />
-
-    <!-- 3. ICONS -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#1B3022" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
-    <!-- 4. SOCIAL & TWITTER -->
+    <!-- ─── SEO CORE (ORIGINAL PRESERVADO) ──────────────────────────── -->
+    <title>Rústica Micropadaria | Pão Artesanal Fermentação Natural 48h | Perdizes SP</title>
+    <meta name="description" content="Micropadaria artesanal em Perdizes, São Paulo. Pão de fermentação natural de 48h, croissant, pizza e macarons feitos à mão. Produção limitada. Reserve pelo WhatsApp!" />
+    <meta name="keywords" content="micropadaria, padaria artesanal, pão natural, fermentação natural, croissant, pizza artesanal, macarons,perdizes sp, padaria handcrafted, pão artesanal são paulo" />
+    <meta name="author" content="Rústica Micropadaria - Flávia e Helena" />
+    <meta name="robots" content="index, follow" />
+    <meta name="googlebot" content="index, follow" />
+    <link rel="canonical" href="https://rusticamicropadaria.com/" />
+    <meta name="language" content="Portuguese" />
+    <meta name="revisit-after" content="7 days" />
+
+    <!-- ─── GEO TAGS ───────────────────────────────────────────────── -->
+    <meta name="geo.region" content="BR-SP" />
+    <meta name="geo.placename" content="Perdizes, São Paulo" />
+    <meta name="geo.position" content="-23.5733;-46.6655" />
+    <meta name="ICBM" content="-23.5733, -46.6655" />
+
+    <!-- ─── OPEN GRAPH ─────────────────────────────────────────────── -->
     <meta property="og:type" content="business.business" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:url" content="https://rusticamicropadaria.com/" />
     <meta property="og:title" content="Rústica Micropadaria | Pão Artesanal 48h de Fermentação" />
+    <meta property="og:description" content="Pão artesanal com fermentação natural de 48h. Croissant, pizza e macarons feitos à mão. Produção limitada em Perdizes SP. Reserve pelo WhatsApp!" />
     <meta property="og:image" content="https://rusticamicropadaria.com/og-image.png" />
-    <meta name="twitter:card" content="summary_large_image" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Rústica Micropadaria - Pão artesanal" />
+    <meta property="og:site_name" content="Rústica Micropadaria" />
 
-    <!-- 5. FONTS -->
+    <!-- ─── BUSINESS METADATA ─────────────────────────────────────── -->
+    <meta property="business:contact_data:street_address" content="Rua Caraíbas, 1282" />
+    <meta property="business:contact_data:locality" content="Perdizes, São Paulo" />
+    <meta property="business:contact_data:region" content="SP" />
+    <meta property="business:contact_data:postal_code" content="05020-000" />
+    <meta property="business:contact_data:country_name" content="Brasil" />
+
+    <!-- ─── TWITTER CARD ──────────────────────────────────────────── -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@rustica.micropadaria" />
+    <meta name="twitter:creator" content="@rustica.micropadaria" />
+    <meta name="twitter:title" content="Rústica Micropadaria | Pão Artesanal 48h" />
+    <meta name="twitter:description" content="Pão artesanal com fermentação natural de 48h. Croissant, pizza e macarons feitos à mão. Reserve pelo WhatsApp!" />
+    <meta name="twitter:image" content="https://rusticamicropadaria.com/og-image.png" />
+
+    <!-- ─── FONTS PRELOAD ─────────────────────────────────────────── -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@400;500;600;700&display=swap" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet" /></noscript>
 
-    <!-- 6. STRUCTURED DATA (JSON-LD) -->
+    <!-- ─── JSON-LD (DADOS ESTRUTURADOS) ──────────────────────────── -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "Bakery",
       "name": "Rústica Micropadaria",
+      "description": "Micropadaria artesanal em Perdizes, São Paulo. Pão de fermentação natural de 48h, produção limitada.",
       "url": "https://rusticamicropadaria.com/",
       "logo": "https://rusticamicropadaria.com/logo.png",
+      "image": "https://rusticamicropadaria.com/og-image.jpg",
+      "telephone": "+5511993968023",
+      "email": "contato@rusticamicropadaria.com",
       "address": {
         "@type": "PostalAddress",
         "streetAddress": "Rua Caraíbas, 1282",
@@ -54,7 +91,29 @@
         "addressRegion": "SP",
         "postalCode": "05020-000",
         "addressCountry": "BR"
-      }
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": "-23.5733",
+        "longitude": "-46.6655"
+      },
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Wednesday", "Thursday", "Friday"],
+          "opens": "10:00",
+          "closes": "18:00"
+        },
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": "Saturday",
+          "opens": "09:00",
+          "closes": "14:00"
+        }
+      ],
+      "priceRange": "$$",
+      "servesCuisine": "Padaria Artesanal, Confeitaria",
+      "sameAs": ["https://instagram.com/rustica.micropadaria"]
     }
     </script>
   </head>

@@ -57,10 +57,10 @@ export default function Hero({ content, heroLogoRef, fornadaTracker }) {
                 overflow: 'hidden'
               }}
             >
-              {/* ATENÇÃO: fetchPriority com P maiúsculo para o React renderizar no HTML final */}
+              {/* CORREÇÃO FINAL: Usando caminho fixo da pasta public */}
               <img 
-                src={content.logo} 
-                alt="Rústica Micropadaria" 
+                src="/logo.png" 
+                alt="Rústica" 
                 fetchPriority="high" 
                 loading="eager" 
                 decoding="sync"
