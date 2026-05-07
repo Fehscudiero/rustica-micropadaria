@@ -24,6 +24,7 @@ import Menu        from './components/sections/Menu';
 import HowItWorks  from './components/sections/HowItWorks';
 import Gallery     from './components/sections/Gallery';
 import CTABanner   from './components/sections/CTABanner';
+import MaintenanceMode from './components/MaintenanceMode';
 
 // ─── Hooks ───────────────────────────────────────────────────
 import { useTilt } from './hooks/useTilt';
@@ -157,6 +158,14 @@ function LandingPage() {
 
 // ─── Roteador Principal ──────────────────────────────────────
 function App() {
+  if (content.siteEmManutencao) {
+    return (
+      <BrowserRouter>
+        <MaintenanceMode />
+      </BrowserRouter>
+    );
+  }
+
   return (
     <BrowserRouter>
       <CustomCursor />
