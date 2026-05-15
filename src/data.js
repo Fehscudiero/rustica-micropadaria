@@ -36,7 +36,7 @@ import macaronsImg      from './assets/sections/menu/macarons.png';
 
 // ─── MODO MANUTENÇÃO ──────────────────────────────────────────
 //  Mude para true para ativar a página de "fora do ar"
-export const siteEmManutencao = true;
+export const siteEmManutencao = false;
 
 
 // ════════════════════════════════════════════════════════════
