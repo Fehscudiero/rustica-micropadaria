@@ -11,7 +11,7 @@
 
 // ─── BRAND ───────────────────────────────────────────────────
 //  Pasta: src/assets/brand/
-import logo from './assets/brand/logo.png';
+import logo from './assets/brand/logo.webp';
 
 // ─── STORY ───────────────────────────────────────────────────
 //  Pasta: src/assets/sections/story/
