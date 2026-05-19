@@ -25,6 +25,7 @@ import HowItWorks  from './components/sections/HowItWorks';
 import Gallery     from './components/sections/Gallery';
 import CTABanner   from './components/sections/CTABanner';
 import MaintenanceMode from './components/MaintenanceMode';
+import DetailedMenu from './components/sections/DetailedMenu';
 
 // ─── Hooks ───────────────────────────────────────────────────
 import { useTilt } from './hooks/useTilt';
@@ -139,6 +140,8 @@ function LandingPage() {
           pinRef={pinRef}
           trackRef={trackRef}
         />
+
+        <DetailedMenu content={content.detailedMenu} />
 
         <HowItWorks content={content.howItWorks} />
 

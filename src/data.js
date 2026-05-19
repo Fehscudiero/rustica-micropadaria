@@ -258,3 +258,81 @@ export const footerContent = {
   copyright: "© 2026 Rústica Micropadaria",
   madeBy:    "Feito com 💚 por Flávia e Helena",
 };
+
+
+// ════════════════════════════════════════════════════════════
+//  DETAILED MENU — Cardápio completo interativo com preços
+// ════════════════════════════════════════════════════════════
+export const detailedMenu = {
+  title: "Nosso Cardápio Completo",
+  subtitle: "Ingredientes selecionados, fermentação lenta e muito carinho em cada receita.",
+  categories: [
+    {
+      id: "paes",
+      name: "Pães",
+      items: [
+        { name: "Baguete", price: "R$ 12" },
+        { name: "Baguete recheada", price: "R$ 25", tag: "sob encomenda" },
+        { name: "Rústica 20% integral", price: "R$ 33" },
+        { name: "Rústica 20% integral com grãos", price: "R$ 35" },
+        { name: "Rústica de azeitonas", price: "R$ 35", tag: "sob encomenda" },
+        { name: "100% integral", price: "R$ 24", tag: "sábado" },
+        { name: "100% integral com grãos", price: "R$ 25", tag: "quarta e sábado" },
+        { name: "Brioche", price: "R$ 28" },
+        { name: "Focaccia", price: "R$ 18" },
+        { name: "Focaccia mesa", price: "R$ 49/54", tag: "sob encomenda" },
+        { name: "Pão folhado", price: "R$ 35", tag: "sob encomenda" },
+        { name: "Ciabatta", price: "R$ 12", tag: "sob encomenda" },
+        { name: "Bisnaguinha (4 unidades)", price: "R$ 15", tag: "sob encomenda" },
+        { name: "Disco pizza - molho", price: "R$ 22", tag: "pré-assado" },
+        { name: "Pizza marguerita", price: "R$ 32", tag: "pré-assada" }
+      ]
+    },
+    {
+      id: "folhados",
+      name: "Folhados",
+      items: [
+        { name: "Croissant", price: "R$ 14" },
+        { name: "Croissant de amêndoas", price: "R$ 18" },
+        { name: "Croissant recheado de creme de queijo", price: "R$ 19" },
+        { name: "Pain au chocolat", price: "R$ 16" },
+        { name: "Pain au chocolat de amêndoas", price: "R$ 21" },
+        { name: "Pankie (pain au chocolat + cookie)", price: "R$ 21" },
+        { name: "Danish caprese", price: "R$ 16" },
+        { name: "Medialuna", price: "R$ 15", tag: "sábado" }
+      ]
+    },
+    {
+      id: "doces-salgados",
+      name: "Doces e Salgados",
+      items: [
+        { name: "Financier", price: "R$ 15" },
+        { name: "Cookie tradicional", price: "R$ 13" },
+        { name: "Brownie", price: "R$ 16" },
+        { name: "Rolinho de canela", price: "R$ 17" },
+        { name: "Bolo do dia", price: "Sob consulta", tag: "sob consulta" },
+        { name: "Pão de queijo", price: "R$ 10" }
+      ],
+      footerNote: "Sempre temos produtos especiais e limitados na nossa vitrine."
+    }
+  ],
+  info: {
+    title: "Informações",
+    reservas: {
+      title: "Reservas",
+      pixKey: "rusticamicropadaria@gmail.com",
+      steps: [
+        "Aceitamos reservas até as 18h do dia anterior.",
+        "Não se preocupe se demorarmos a responder! Até as 18h confirmaremos seu pedido para garantir seu pão fresquinho no dia seguinte.",
+        "Para confirmar a sua reserva, faça o pagamento antecipado via PIX."
+      ]
+    },
+    entregas: {
+      title: "Entregas",
+      steps: [
+        "As entregas serão realizadas no final do dia combinado.",
+        "Serviço de entrega via motoboy (taxa informada no ato da reserva)."
+      ]
+    }
+  }
+};
