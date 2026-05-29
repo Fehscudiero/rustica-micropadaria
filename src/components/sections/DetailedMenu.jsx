@@ -59,7 +59,7 @@ export default function DetailedMenu({ content }) {
               className={`menu-tab-btn ${activeTab === 'info' ? 'is-active' : ''}`}
               onClick={() => handleTabChange('info')}
             >
-              Reservas & Entregas
+              Reservas
             </button>
           </div>
         </div>
